@@ -1,111 +1,97 @@
-import React from 'react'
+import React, { Component } from "react";
+import { Switch, Route, withRouter } from "react-router-dom";
+import NavBar from "./components/NavBar";
+import QuizForm from "./container/QuizForm";
+// import ResultsPage from "./container/ResultsPage";
+import QuestionPage from "./container/QuestionPage";
+import LandingPage from "./container/LandingPage";
+import { NavLink } from "react-router-dom";
+import "./styles/App.css";
+
+class App extends Component {
+  state = {
+    numberOfQuestions: 0,
+    difficulty: "",
+    category: "",
+    player1: "",
+    player2: "",
+    player3: "",
+    player4: "",
+  };
+
+  setQuizSettings = (settings) => {
+    const {
+      numberOfQuestions,
+      difficulty,
+      category,
+      player1,
+      player2,
+      player3,
+      player4,
+    } = settings;
+    this.setState({
+      numberOfQuestions,
+      difficulty,
+      category,
+      player1,
+      player2,
+      player3,
+      player4,
+    });
+    console.log("redirect to /questions");
+    this.props.history.push("/questions");
+  };
+
+  render() {
+    return (
+      <div id="app">
+
+      <main className="quiz">
+        <header>
+          <NavLink to="/" className="navlink"><h1 className="navlink">Quizolation</h1></NavLink>
+          {/* <NavBar /> */}
+        </header>
 
 
-class App extends React.Component {
-    state = { playerOne: "" , playerTwo: "", playerThree: "", playerFour: "", numberOfQuestions: "", difficulty: "", category: "", questions: []};
+          <Switch>
+            <Route exact path="/" component={LandingPage} />
 
-    handleSubmit = e => {
-        e.preventDefault();
-        this.setState( 
-            {   
-                playerOne : e.target.playerOne.value,
-                playerTwo : e.target.playerTwo.value,
-                playerThree : e.target.playerThree.value,
-                playerFour : e.target.playerFour.value,
-                numberOfQuestions : e.target.numberOfQuestions.value,
-                difficulty : e.target.difficulty.value,
-                category : e.target.category.value
-            },   
+            <Route
+              exact
+              path="/homepage"
+              render={() => <QuizForm set={this.setQuizSettings} />}
+            />
 
-                () => {
-            fetch(`https://opentdb.com/api.php?amount=${this.state.numberOfQuestions}&category=${this.state.category}&difficulty=${this.state.difficulty}&type=multiple`)
-            .then(res => res.json())
-            .then((data) => {
-                console.log(data.results)
-                console.log(this.state.playerOne)
-                console.log(this.state.playerTwo)
-                console.log(this.state.playerThree)
-                console.log(this.state.playerFour)
-                console.log(this.state.numberOfQuestions)
-                console.log(this.state.difficulty)
-                console.log(this.state.category)
-            })
-            .catch(console.log)
-        });
+            <Route
+              path="/questions"
+              render={(props) => (
+                <QuestionPage
+                  {...props}
+                  numberOfQuestions={this.state.numberOfQuestions}
+                  difficulty={this.state.difficulty}
+                  category={this.state.category}
+                  player1={this.state.player1}
+                  player2={this.state.player2}
+                  player3={this.state.player3}
+                  player4={this.state.player4}
+                />
+              )}
+            />
 
-    }
-
-
-    render(){
-
-        
-
-      return (
-          <main>
-
-             <form onSubmit={this.handleSubmit}>
-
-                <h2>Please enter names of players</h2>
-                <input type="text" id="playerOne" name="playerOne" placeholder = "Player 1"></input>
-                <input type="text" id="playerTwo" name="playerTwo" placeholder = "Player 2"></input>
-                <input type="text" id="playerThree" name="playerThree" placeholder = "Player 3"></input>
-                <input type="text" id="playerFour" name="playerFour" placeholder = "Player 4"></input>
-                
-                <h2>Please set the number of Questions</h2>
-                <input type="number" id="numberOfQuestions" name="numberOfQuestions" placeholder = "No. Of Questions" max = "20" ></input>
+            {/* <Route
+            path="/results"
+            render={(props) => (
+              <ResultsPage {...props} userScore={this.state.userScore} />
+            )}
+          /> */}
+          </Switch>
 
 
-                <h2>Choose a difficulty</h2>
-                <select name="difficulty" id="dificulty">
-                <option value="" disabled selected hidden>Set Difficulty...</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                </select>
-             <h2>Choose a category</h2>
-             
-                <select name="category" id="category">
-                <option value="" disabled selected hidden>Choose a topic...</option>
-                    <option value="9">General Knowledge</option>
-                    <optgroup label="Entertainment">
-                    <option value="10">Entertainment: Books</option>
-                    <option value="11">Entertainment: Film</option>
-                    <option value="12">Entertainment: Music</option>                    
-                    <option value="13">Entertainment: Musicals & Theatres</option>
-                    <option value="14">Entertainment: Television</option>
-                    <option value="15">Entertainment: Video Games</option>                    
-                    <option value="16">Entertainment: Board Games</option>
-                    <option value="31">Entertainment: Japanese Anime & Manga"},</option>
-                    <option value="32">Entertainment: Cartoon & Animations</option>
-                    <option value="29">Entertainment: Comics</option>
-                    </optgroup>
-                    <optgroup label="Science">
-                    <option value="17">Science & Nature</option>
-                    <option value="18">Science: Computers</option>                    
-                    <option value="19">Science: Mathematics</option>
-                    <option value="30">Science: Gadgets</option>
-                    </optgroup>
-                    <option value="20">Mythology</option>
-                    <option value="21">Sports</option>       
-                    <option value="22">Geography</option>
-                    <option value="23">History</option>
-                    <option value="24">Politics</option>
-                    <option value="25">Art</option>
-                    <option value="26">Celebrities</option>                    
-                    <option value="27">Animals</option>
-                    <option value="28">Vehicles</option>
+        <footer>Created by Atheer, Simon, Farid and Hannah</footer>
+      </main>
 
-
-                </select>
-
-                <input type="submit" value="Submit"></input>
-
-             </form>
-
-        </main>
-
-      )
-    }
+      </div>
+    );
   }
-
-export default App
+}
+export default withRouter(App);
